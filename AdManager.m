@@ -20,22 +20,24 @@ static AdManager *sharedAdManager = nil;
 #pragma mark -
 #pragma mark ADBannerView
 
--(id) init {
+-(id) init;
+{
 	if ((self = [super init])) {
 		
 		//Initialize the class manually to make it compatible with iOS < 4.0
 		Class classAdBannerView = NSClassFromString(@"ADBannerView");
 		if (classAdBannerView != nil) 
 		{
+			[self configureBanners];
+
+			
 			ADBannerView *adView = [[classAdBannerView alloc] initWithFrame:CGRectZero];
 			[adView setDelegate:self];
 			
-			if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-				[adView setRequiredContentSizeIdentifiers: [NSSet setWithObjects:
-															ADBannerContentSizeIdentifierLandscape, nil]];
+			if (IsIPad()) {
+				[adView setRequiredContentSizeIdentifiers: [NSSet setWithObjects:portraitBanner, landscapeBanner, nil]];
 			} else {
-				[adView setRequiredContentSizeIdentifiers: [NSSet setWithObjects: 
-															ADBannerContentSizeIdentifierPortrait, nil]];
+				[adView setRequiredContentSizeIdentifiers: [NSSet setWithObjects:portraitBanner, nil]];
 			}
 			
 			self.adBannerView = adView;
@@ -60,7 +62,21 @@ static AdManager *sharedAdManager = nil;
 	return self;
 }
 
--(UIInterfaceOrientation) interfaceOrientation {
+-(void) configureBanners;
+{
+	if (&ADBannerContentSizeIdentifierPortrait != nil) {
+		portraitBanner = ADBannerContentSizeIdentifierPortrait;
+		landscapeBanner = ADBannerContentSizeIdentifierLandscape;
+		NSLog(@"Running on iOS 4.2 or newer.");
+	} else {
+		portraitBanner = ADBannerContentSizeIdentifier320x50;
+		landscapeBanner = ADBannerContentSizeIdentifier480x32;
+		NSLog(@"Running on Pre-iOS 4.2.");
+	}
+}
+
+-(UIInterfaceOrientation) interfaceOrientation;
+{
 	Cocos2DController *cocosController = [[[UIApplication sharedApplication] delegate] cocosController];
 	UIInterfaceOrientation intOrientation = [cocosController interfaceOrientation];
 	return intOrientation;
@@ -68,7 +84,8 @@ static AdManager *sharedAdManager = nil;
 
 #pragma mark Singleton Methods
 
-+ (id)sharedManager {
++ (id)sharedAdManager;
+{
 	
     @synchronized(self) {
         if(sharedAdManager == nil)
@@ -77,32 +94,39 @@ static AdManager *sharedAdManager = nil;
     return sharedAdManager;
 }
 
-+ (id)allocWithZone:(NSZone *)zone {
-    return [[self sharedManager] retain];
++ (id)allocWithZone:(NSZone *)zone;
+{
+    return [[self sharedAdManager] retain];
 }
 
-- (id)copyWithZone:(NSZone *)zone {
+- (id)copyWithZone:(NSZone *)zone;
+{
     return self;
 }
 
-- (id)retain {
+- (id)retain;
+{
     return self;
 }
 
-- (unsigned)retainCount {
+- (unsigned)retainCount;
+{
     return UINT_MAX; //denotes an object that cannot be released
 }
 
-- (void)release {
+- (void)release;
+{
     // never release
 }
 
-- (id)autorelease {
+- (id)autorelease;
+{
     return self;
 }
 
 //should never get called!
--(void) dealloc {
+-(void) dealloc;
+{
 	[adBannerView release];
 	[super dealloc];
 }
@@ -110,11 +134,13 @@ static AdManager *sharedAdManager = nil;
 #pragma mark -
 #pragma mark Other Methods
 
--(void) startAds {
+-(void) startAds;
+{
 	//nothing!
 }
 
--(void) attachAdToView:(UIView *)view {
+-(void) attachAdToView:(UIView *)view;
+{
 	if (!IsEmpty(adBannerView)) {
 		if (!IsEmpty([adBannerView superview]))
 			[self.adBannerView removeFromSuperview];
@@ -133,10 +159,8 @@ static AdManager *sharedAdManager = nil;
 		{
 			case UIInterfaceOrientationPortrait:
 			{				
-				[adBannerView setCurrentContentSizeIdentifier:ADBannerContentSizeIdentifierPortrait];
-				
-				NSString *contentSizeID = [adBannerView currentContentSizeIdentifier];
-				CGSize size = [ADBannerView sizeFromBannerContentSizeIdentifier:contentSizeID];
+				[adBannerView setCurrentContentSizeIdentifier:portraitBanner];
+				CGSize size = [ADBannerView sizeFromBannerContentSizeIdentifier:portraitBanner];
 				[adBannerView setCenter:CGPointMake(size.width / 2, size.height / 2)];
 
 			}
@@ -144,10 +168,8 @@ static AdManager *sharedAdManager = nil;
 			case UIInterfaceOrientationLandscapeLeft:
 			case UIInterfaceOrientationLandscapeRight:
 			{
-				[adBannerView setCurrentContentSizeIdentifier:ADBannerContentSizeIdentifierLandscape];
-
-				NSString *contentSizeID = [adBannerView currentContentSizeIdentifier];
-				CGSize size = [ADBannerView sizeFromBannerContentSizeIdentifier:contentSizeID];
+				[adBannerView setCurrentContentSizeIdentifier:landscapeBanner];
+				CGSize size = [ADBannerView sizeFromBannerContentSizeIdentifier:landscapeBanner];
 				[adBannerView setCenter:CGPointMake(size.width / 2, size.height / 2)];	
 			}
 				break;
@@ -167,7 +189,6 @@ static AdManager *sharedAdManager = nil;
 
 - (void) stopActionsForAd
 {
-	
 	/* remember to pause music too! */
 	[[CCDirector sharedDirector] stopAnimation];
 	[[CCDirector sharedDirector] pause];
@@ -175,7 +196,6 @@ static AdManager *sharedAdManager = nil;
 
 - (void) startActionsForAd
 {
-	
 	/* resume music, if paused */
 	[[CCDirector sharedDirector] stopAnimation];
 	[[CCDirector sharedDirector] resume];

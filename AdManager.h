@@ -11,13 +11,17 @@
 @interface AdManager : NSObject <ADBannerViewDelegate> {
 	
 	ADBannerView *adBannerView;
+	NSString *portraitBanner, *landscapeBanner;
 }
 
 @property (nonatomic, retain) ADBannerView *adBannerView;
 
-+ (id)sharedManager;
++ (id)sharedAdManager;
+
+-(void) configureBanners;
 
 -(void) startAds;
+-(void) removeAdFromSuperview;
 -(void) attachAdToView:(UIView *)view;
 -(void) fixBannerToDeviceOrientation:(UIInterfaceOrientation)orientation;
 
