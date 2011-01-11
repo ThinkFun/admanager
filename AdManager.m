@@ -77,7 +77,11 @@ static AdManager *sharedAdManager = nil;
 
 -(UIInterfaceOrientation) interfaceOrientation;
 {
+<<<<<<< HEAD
 	Cocos2DController *cocosController = [[[UIApplication sharedApplication] delegate] cocosController];
+=======
+	Cocos2DController *cocosController = [(TFAppDelegate *)[[UIApplication sharedApplication] delegate] cocosController];
+>>>>>>> first commit.
 	UIInterfaceOrientation intOrientation = [cocosController interfaceOrientation];
 	return intOrientation;
 }
