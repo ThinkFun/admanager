@@ -20,8 +20,6 @@
 
 -(void) configureBanners;
 
--(void) startAds;
--(void) removeAdFromSuperview;
 -(void) attachAdToView:(UIView *)view;
 -(void) fixBannerToDeviceOrientation:(UIInterfaceOrientation)orientation;
 

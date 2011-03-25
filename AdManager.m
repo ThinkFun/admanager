@@ -134,11 +134,6 @@ static AdManager *sharedAdManager = nil;
 #pragma mark -
 #pragma mark Other Methods
 
--(void) startAds;
-{
-	//nothing!
-}
-
 -(void) attachAdToView:(UIView *)view;
 {
 	if (!IsEmpty(adBannerView)) {
