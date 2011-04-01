@@ -86,7 +86,6 @@ static AdManager *sharedAdManager = nil;
 
 + (id)sharedAdManager;
 {
-	
     @synchronized(self) {
         if(sharedAdManager == nil)
             sharedAdManager = [[super allocWithZone:NULL] init];
@@ -136,12 +135,14 @@ static AdManager *sharedAdManager = nil;
 
 -(void) attachAdToView:(UIView *)view;
 {
-	if (!IsEmpty(adBannerView)) {
-		if (!IsEmpty([adBannerView superview]))
-			[self.adBannerView removeFromSuperview];
-		
+	if (!IsEmpty(adBannerView))
 		[view addSubview:self.adBannerView];
-	}
+}
+
+-(void) removeAdFromViews;
+{
+	if (!IsEmpty([adBannerView superview]))
+		[self.adBannerView removeFromSuperview];
 }
 
 - (void)fixBannerToDeviceOrientation:(UIInterfaceOrientation)orientation
