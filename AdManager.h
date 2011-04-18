@@ -21,6 +21,8 @@
 -(void) configureBanners;
 
 -(void) attachAdToView:(UIView *)view;
+-(void) removeAdFromViews;
+
 -(void) fixBannerToDeviceOrientation:(UIInterfaceOrientation)orientation;
 
 @end
